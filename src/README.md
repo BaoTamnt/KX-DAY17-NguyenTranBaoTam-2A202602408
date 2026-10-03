@@ -1,19 +1,22 @@
-# Student Scaffold
+# Memory Systems Lab
 
-This `src/` folder is the student version of the lab.
+The implementation contains both a deterministic offline mode and an optional
+live chat-model mode. `config.py` loads provider, path, and compact-memory
+settings; `memory_store.py` handles profiles and conversation compaction.
 
-- It keeps the same high-level structure
-- The Python files are intentionally incomplete and contain pseudocode / TODOs
-- The benchmark structure should include: standard benchmark + long-context stress benchmark
-- The runtime should support these providers: `openai`, `custom`, `gemini`, `anthropic`, `ollama`, `openrouter`
+Run commands from the repository root:
 
-Suggested flow:
+```bash
+python src/benchmark.py
+python -m pytest src/test_agents.py -v
+```
 
-1. Start with `config.py`
-2. Implement `memory_store.py`
-3. Finish `agent_baseline.py`
-4. Finish `agent_advanced.py`
-5. Implement `benchmark.py`
-6. Make `test_agents.py` pass
+Without model credentials, agents use repeatable offline responses. Set
+`LLM_PROVIDER`, `LLM_MODEL`, and the provider's API key in the environment (or
+in a root `.env` file) to enable live responses. `LLM_PROVIDER` supports
+`openai`, `custom`, `gemini`, `anthropic`, `ollama`, and `openrouter`.
 
-Datasets are available at the repo root in `data/`.
+The benchmark runs both `data/conversations.json` and
+`data/advanced_long_context.json`, reporting recall, prompt/token estimates,
+profile growth, and compaction counts. Runtime profiles are written under
+`state/profiles/` and are excluded from Git.

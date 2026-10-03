@@ -165,6 +165,28 @@ pytest src/test_agents.py -v
 
 Benchmark cần in ra hai bảng: **Standard Benchmark** và **Long-Context Stress Benchmark**. Mỗi bảng so sánh Baseline với Advanced theo đủ 6 cột trong phần "Chỉ số benchmark cần hiểu".
 
+### Diễn giải kết quả và giới hạn
+
+Mặc định benchmark chạy offline, không cần API key. Các phép đo token offline
+dùng estimator heuristic để so sánh xu hướng, không đại diện chính xác cho
+tokenizer hoặc chi phí billing của từng provider. `Prompt tokens processed`
+bao gồm hồ sơ, summary và lịch sử hội thoại còn được nạp vào mỗi lượt.
+
+Kết quả thường thể hiện các trade-off sau:
+
+- Ở benchmark ngắn, Advanced có thể xử lý nhiều prompt token hơn vì phải nạp
+  `User.md`; đổi lại, hồ sơ bền vững giúp recall qua thread mới tốt hơn.
+- Ở stress benchmark, compact chuyển phần lịch sử cũ thành summary và giữ lại
+  một số lượt gần nhất, nên giảm prompt load; số lần compact được báo riêng.
+- `Memory growth (bytes)` là kích thước hồ sơ người dùng tăng trong lần chạy.
+  Trích fact bằng heuristic có thể bỏ sót hoặc lưu nhầm thông tin mơ hồ; correction
+  mới nhất được ưu tiên nhưng vẫn cần kiểm tra `User.md` nếu dùng dữ liệu thực.
+
+Để bật model thật, có thể cấu hình `LLM_PROVIDER`, `LLM_MODEL` và khóa API của
+provider trong môi trường hoặc `.env`. Các provider được hỗ trợ là `openai`,
+`custom`, `gemini`, `anthropic`, `ollama` và `openrouter`. File hồ sơ nằm trong
+`state/profiles/` và không được commit.
+
 ## Cách dùng repo này
 
 Nếu các bạn là sinh viên:
